@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wextra -Werror
 
 SRC_DIR = ./src/
 
-SRC_FILES = pipex.c pipex_utils.c
+SRC_FILES = pipex.c pipex_utils.c parsing.c
 
 SRC = $(addprefix $(SRC_DIR), $(SRC_FILES))
 
@@ -18,6 +18,7 @@ $(NAME): $(OBJ)
 	@$(CC) $(OBJ) -o $(NAME) -L$(LIBFT) -lft
 
 $(LIBFT)/libft.a:
+	@clear
 	@make -C $(LIBFT)
 	@make bonus -C $(LIBFT)
 
