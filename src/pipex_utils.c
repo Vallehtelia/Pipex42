@@ -6,12 +6,15 @@
 /*   By: vvaalant <vvaalant@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 13:21:26 by vvaalant          #+#    #+#             */
-/*   Updated: 2024/03/06 22:52:16 by vvaalant         ###   ########.fr       */
+/*   Updated: 2024/03/07 15:25:58 by vvaalant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
+/*
+- Searches path from environment variables and returns path to given command.
+*/
 char	*find_path(char *cmd, char **envp, int i)
 {
 	char	**paths;
@@ -41,7 +44,11 @@ char	*find_path(char *cmd, char **envp, int i)
 	return (0);
 }
 
-void	execute(char *av, char **envp)
+/*
+- Splits command to array and finds path for command.
+	Then passes command to execve to run first command or program.
+*/
+void	execute_cmd(char *av, char **envp)
 {
 	char	**cmd;
 	char	*path;
@@ -70,6 +77,9 @@ void	execute(char *av, char **envp)
 		exit(1);
 }
 
+/*
+- Prints error for command not found as stderr.
+*/
 void	error_str(char *av, int n)
 {
 	if (n == 1)

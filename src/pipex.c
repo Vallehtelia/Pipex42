@@ -6,12 +6,15 @@
 /*   By: vvaalant <vvaalant@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 17:06:12 by vvaalant          #+#    #+#             */
-/*   Updated: 2024/03/06 22:52:17 by vvaalant         ###   ########.fr       */
+/*   Updated: 2024/03/07 15:25:57 by vvaalant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
+/*
+- Reads infinite input for amount given to buffer and writes it to pipe.
+*/
 void	read_limited_urandom_data(int output_fd)
 {
 	int		urandom_fd;
@@ -35,14 +38,36 @@ void	read_limited_urandom_data(int output_fd)
 	close(urandom_fd);
 }
 
+/*
+- In case of infinite input this function creates temporary pipe.
+	Stores Buffer amount of data and passes it as input for first
+	command.
+*/
+static void	alter_input(void)
+{
+	int	interpipe[2];
+
+	if (pipe(interpipe) == -1)
+	{
+		perror("pipe");
+		exit(EXIT_FAILURE);
+	}
+	read_limited_urandom_data(interpipe[1]);
+	close(interpipe[1]);
+	dup2(interpipe[0], STDIN_FILENO);
+	close(interpipe[0]);
+}
+
+/*
+- Reads from input file runs first command and outputs to pipes writing end.
+*/
 void	child_process(char **av, char **envp, int *fd)
 {
 	int	filein;
 
 	if (ft_strncmp(av[1], "/dev/urandom", 13) == 0)
 	{
-		read_limited_urandom_data(fd[1]);
-		close(fd[1]);
+		alter_input();
 	}
 	else
 	{
@@ -52,15 +77,19 @@ void	child_process(char **av, char **envp, int *fd)
 			perror("pipex: input");
 			exit(0);
 		}
-		dup2(fd[1], STDOUT_FILENO);
 		dup2(filein, STDIN_FILENO);
 		close(filein);
 	}
+	dup2(fd[1], STDOUT_FILENO);
 	close(fd[0]);
 	close(fd[1]);
-	execute(av[2], envp);
+	execute_cmd(av[2], envp);
 }
 
+/*
+- Parent process is responsible reading from pipe and executing second command.
+- Creating if non existent the output file
+*/
 void	parent_process(char **av, char **envp, int *fd)
 {
 	int	fileout;
@@ -73,7 +102,7 @@ void	parent_process(char **av, char **envp, int *fd)
 	close(fileout);
 	close(fd[1]);
 	close(fd[0]);
-	execute(av[3], envp);
+	execute_cmd(av[3], envp);
 }
 
 int	main(int ac, char **av, char **envp)

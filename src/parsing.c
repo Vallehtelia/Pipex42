@@ -6,12 +6,15 @@
 /*   By: vvaalant <vvaalant@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 16:38:13 by vvaalant          #+#    #+#             */
-/*   Updated: 2024/03/06 22:52:16 by vvaalant         ###   ########.fr       */
+/*   Updated: 2024/03/07 15:25:59 by vvaalant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
+/*
+- Simply skips spaces.
+*/
 static const char	*skip_spaces(const char *str)
 {
 	while (*str == ' ')
@@ -19,6 +22,9 @@ static const char	*skip_spaces(const char *str)
 	return (str);
 }
 
+/*
+- Does allocating for each argument and returns them to array.
+*/
 static char	*copy_arg(const char *cmd, char **arg_out, int j, char quote)
 {
 	char		*arg;
@@ -48,6 +54,11 @@ static char	*copy_arg(const char *cmd, char **arg_out, int j, char quote)
 	return ((char *)cmd);
 }
 
+/*
+- Similar to ft_split but splits given parameter with spaces and skips
+	few special characters like " ' ", " " " and " \ ".
+- Returns array of null terminated strings to run with execve.
+*/
 char	**parse_command(const char *cmd)
 {
 	char		**args;

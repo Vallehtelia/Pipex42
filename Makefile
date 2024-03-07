@@ -18,7 +18,6 @@ $(NAME): $(OBJ)
 	@$(CC) $(OBJ) -o $(NAME) -L$(LIBFT) -lft
 
 $(LIBFT)/libft.a:
-	@clear
 	@make -C $(LIBFT)
 	@make bonus -C $(LIBFT)
 
